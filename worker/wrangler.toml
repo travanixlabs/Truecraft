@@ -17,12 +17,6 @@ FROM_EMAIL = "Truecraft website <onboarding@resend.dev>"
 # if the site moves to a custom domain. Blank falls back to a text wordmark.
 LOGO_URL = "https://travanixlabs.github.io/Truecraft/uploads/IMG_9924.jpeg"
 
-# Google Business Profile place id, for the live reviews panel. Find it with
-# the Place ID Finder: https://developers.google.com/maps/documentation/places/web-service/place-id
-# Leave blank (or omit the GOOGLE_PLACES_API_KEY secret) and the site keeps
-# its written testimonials instead — nothing breaks.
-GOOGLE_PLACE_ID = ""
-
 # Origins allowed to POST here. Add the custom domain when it goes live.
 ALLOWED_ORIGINS = "https://travanixlabs.github.io,http://localhost:8000"
 

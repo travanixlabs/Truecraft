@@ -509,25 +509,6 @@ h1, h2, h3, p, blockquote, figure { margin: 0; }
   gap: 22px;
   justify-content: center;
 }
-.tc-google__skeletons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 18px;
-}
-.tc-skel {
-  padding: 22px;
-  border: 1px solid var(--line-2);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.tc-skel__head { display: flex; align-items: center; gap: 10px; }
-.tc-skel__avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--fill); }
-.tc-skel__lines { display: flex; flex-direction: column; gap: 4px; }
-.tc-skel__lines i { display: block; background: var(--fill); }
-.tc-skel__body { display: flex; flex-direction: column; gap: 7px; }
-.tc-skel__body i { display: block; height: 8px; background: var(--fill-2); }
-
 .tc-google__pending {
   display: flex;
   align-items: center;

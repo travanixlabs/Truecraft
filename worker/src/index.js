@@ -10,7 +10,6 @@
    ========================================================================== */
 
 import { renderHtml, renderText } from './email.js';
-import { getReviews } from './reviews.js';
 
 const LIMITS = {
   maxPhotos: 5,
@@ -36,19 +35,6 @@ export default {
     const cors = corsHeaders(origin, env);
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-
-    // Google reviews, read-only and cached. Deliberately not origin-locked:
-    // it returns nothing that is not already public on the Maps listing.
-    if (request.method === 'GET' && new URL(request.url).pathname === '/reviews') {
-      try {
-        const data = await getReviews(env);
-        return json(data, 200, { ...cors, 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=1800' });
-      } catch (err) {
-        console.error('reviews failed', err && err.stack || err);
-        return json({ configured: true, error: true }, 200, { ...cors, 'Access-Control-Allow-Origin': '*' });
-      }
-    }
-
     if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405, cors);
     if (env.ALLOWED_ORIGINS && !isAllowedOrigin(origin, env)) {
       return json({ error: 'Forbidden' }, 403, cors);
