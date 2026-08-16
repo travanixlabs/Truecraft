@@ -1,6 +1,6 @@
 name = "truecraft-quote"
 main = "src/index.js"
-compatibility_date = "2026-08-16"
+compatibility_date = "2026-02-05"
 workers_dev = true
 
 [vars]
@@ -21,7 +21,7 @@ ALLOWED_ORIGINS = "https://travanixlabs.github.io,http://localhost:8000"
 # then paste the printed id below.
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "9e455ae8516541f49b44227e8a0b1c39"
 
 # Secrets are NOT set here — they are encrypted at rest in Cloudflare.
 # Set them once with:
