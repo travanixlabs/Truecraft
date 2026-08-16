@@ -284,9 +284,10 @@
       </div>
     </div>
 
-    <!-- No back end is wired yet: the form validates and confirms locally.
-         Point `action`/`method` at the endpoint (or a form service) when it exists. -->
-    <form class="tc-form" data-tc="form" novalidate>
+    <!-- Posts to the Cloudflare Worker in worker/, which sends the enquiry on
+         via Resend. Set data-endpoint to the deployed Worker URL. -->
+    <form class="tc-form" data-tc="form" novalidate
+          data-endpoint="https://truecraft-quote.REPLACE-ME.workers.dev">
       <div class="tc-form__row">
         <label class="tc-field">
           <span class="tc-field__label">Name</span>
@@ -295,6 +296,10 @@
         <label class="tc-field">
           <span class="tc-field__label">Phone</span>
           <input class="tc-input" type="tel" name="phone" autocomplete="tel" required>
+        </label>
+        <label class="tc-field">
+          <span class="tc-field__label">Email <span class="tc-field__opt">optional</span></span>
+          <input class="tc-input" type="email" name="email" autocomplete="email">
         </label>
         <label class="tc-field">
           <span class="tc-field__label">Suburb</span>
@@ -322,9 +327,20 @@
       </label>
 
       <label class="tc-drop" data-tc="drop">
-        <input type="file" name="photos" accept="image/*" multiple hidden>
+        <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple hidden>
         <span data-tc="droplabel">Attach photos of the area</span>
       </label>
+      <p class="tc-form__hint">Up to 5 photos. Large images are shrunk on your phone before sending, so it works fine on mobile data.</p>
+
+      <!-- Bot trap: hidden from people, irresistible to form-fillers. -->
+      <div class="tc-hp" aria-hidden="true">
+        <label>Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <input type="hidden" name="rendered_at" data-tc="rendered">
+
+      <div class="cf-turnstile" data-tc="turnstile"
+           data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"
+           data-theme="light" data-size="flexible"></div>
 
       <button class="tc-submit" type="submit" data-tc="submit">Request my free quote</button>
       <p class="tc-form__status" data-tc="status" role="status" aria-live="polite"></p>
@@ -374,6 +390,7 @@
 }
 </script>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="assets/js/site.js" defer></script>
 </body>
 </html>

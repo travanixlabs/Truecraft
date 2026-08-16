@@ -638,10 +638,35 @@ h1, h2, h3, p, blockquote, figure { margin: 0; }
 
 .tc-form__status {
   font: 500 14px/1.5 var(--sans);
-  color: var(--grey-warm);
+  color: var(--green-dark);
   min-height: 0;
 }
 .tc-form__status:empty { display: none; }
+.tc-form__status.is-error { color: #C0392B; }
+
+.tc-form__hint {
+  margin-top: -6px;
+  font: 400 13px/1.5 var(--sans);
+  color: var(--grey-mid);
+}
+
+.tc-field__opt {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--grey-mid);
+}
+
+/* Bot trap — off-screen rather than display:none, which some bots skip. */
+.tc-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.cf-turnstile { min-height: 65px; }
 
 /* ── Mobile call bar ──────────────────────────────────────────────────── */
 

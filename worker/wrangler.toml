@@ -1,0 +1,29 @@
+name = "truecraft-quote"
+main = "src/index.js"
+compatibility_date = "2026-08-16"
+workers_dev = true
+
+[vars]
+# Where enquiries land.
+TO_EMAIL = "truecraft@outlook.com.au"
+
+# Until the domain is verified in Resend, this must stay as the sandbox sender
+# and TO_EMAIL must be the Resend account's own login address. Once
+# truecraft.com.au (or whichever domain) is verified, change this to something
+# like "Truecraft website <quotes@truecraft.com.au>" and redeploy.
+FROM_EMAIL = "Truecraft website <onboarding@resend.dev>"
+
+# Origins allowed to POST here. Add the custom domain when it goes live.
+ALLOWED_ORIGINS = "https://travanixlabs.github.io,http://localhost:8000"
+
+# Rate-limit counters. Create with:
+#   npx wrangler kv namespace create RATE_LIMIT
+# then paste the printed id below.
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Secrets are NOT set here — they are encrypted at rest in Cloudflare.
+# Set them once with:
+#   npx wrangler secret put RESEND_API_KEY
+#   npx wrangler secret put TURNSTILE_SECRET

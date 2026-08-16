@@ -169,56 +169,147 @@
     vid.addEventListener('error', function () { vid.controls = true; }, { once: true });
   }
 
-  /* ── Quote form ──────────────────────────────────────────────────────── */
+  /* ── Quote form ──────────────────────────────────────────────────────────
+     Photos are resized in the browser before upload: it keeps the request
+     small enough for the Worker and the mailbox at the other end, and means
+     someone standing in their backyard on mobile data isn't uploading 25 MB
+     of full-resolution phone photos. The Worker re-checks every limit. */
+
+  var MAX_PHOTOS = 5;
+  var MAX_EDGE = 1600;          // px, long edge
+  var JPEG_QUALITY = 0.82;
+  var MAX_TOTAL_BYTES = 8 * 1024 * 1024;
+  var COOLDOWN_MS = 15 * 60 * 1000;
+  var COOLDOWN_KEY = 'tc-quote-sent';
 
   var form = q('form');
   var drop = q('drop');
   var dropLabel = q('droplabel');
+  var fileInput = drop && drop.querySelector('input[type="file"]');
 
-  if (drop && dropLabel) {
-    var fileInput = drop.querySelector('input[type="file"]');
-    if (fileInput) {
-      fileInput.addEventListener('change', function () {
-        var n = fileInput.files ? fileInput.files.length : 0;
-        dropLabel.textContent = n === 0
-          ? 'Attach photos of the area'
-          : n + (n === 1 ? ' photo attached' : ' photos attached');
-      });
-    }
+  var stamp = q('rendered');
+  if (stamp) stamp.value = String(Date.now());
+
+  if (fileInput && dropLabel) {
+    fileInput.addEventListener('change', function () {
+      var n = fileInput.files ? fileInput.files.length : 0;
+      if (n > MAX_PHOTOS) {
+        setStatus('Please choose no more than ' + MAX_PHOTOS + ' photos.', true);
+        fileInput.value = '';
+        n = 0;
+      }
+      dropLabel.textContent = n === 0
+        ? 'Attach photos of the area'
+        : n + (n === 1 ? ' photo attached' : ' photos attached');
+    });
+  }
+
+  function setStatus(msg, isError) {
+    var status = q('status');
+    if (!status) return;
+    status.textContent = msg || '';
+    status.classList.toggle('is-error', !!isError);
+  }
+
+  // Draw the image to a canvas at a capped size and re-encode as JPEG.
+  function shrink(file) {
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
+        if (scale === 1 && file.size < 600 * 1024) { URL.revokeObjectURL(url); return resolve(file); }
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(function (blob) {
+          if (!blob) return resolve(file);
+          resolve(new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }));
+        }, 'image/jpeg', JPEG_QUALITY);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
   }
 
   if (form) {
     var submit = q('submit');
-    var status = q('status');
+    var defaultLabel = submit ? submit.textContent : '';
+
+    form.addEventListener('input', function (e) {
+      if (e.target.classList) e.target.classList.remove('is-invalid');
+    });
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      if (submit && submit.disabled) return;
 
-      // Nothing is posted anywhere yet — swap this block for a real fetch()
-      // (or set action/method on the form) once an endpoint exists.
-      var required = form.querySelectorAll('[required]');
+      // Client-side cooldown. Easily bypassed, which is why the Worker keeps
+      // its own per-IP limit — this is here to stop honest double-sends.
+      var last = Number(localStorage.getItem(COOLDOWN_KEY) || 0);
+      if (last && Date.now() - last < COOLDOWN_MS) {
+        var mins = Math.ceil((COOLDOWN_MS - (Date.now() - last)) / 60000);
+        setStatus('You have just sent an enquiry. Try again in ' + mins + ' minute' + (mins === 1 ? '' : 's') + ', or call 0418 126 371.', true);
+        return;
+      }
+
       var firstBad = null;
-      Array.prototype.forEach.call(required, function (field) {
+      Array.prototype.forEach.call(form.querySelectorAll('[required]'), function (field) {
         var ok = field.value.trim() !== '';
         field.classList.toggle('is-invalid', !ok);
         if (!ok && !firstBad) firstBad = field;
       });
-
+      var emailField = form.querySelector('input[name="email"]');
+      if (emailField && emailField.value.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailField.value.trim())) {
+        emailField.classList.add('is-invalid');
+        if (!firstBad) firstBad = emailField;
+      }
       if (firstBad) {
-        if (status) status.textContent = 'Add your name and phone number so Amir can call you back.';
+        setStatus('Add your name and phone number so Amir can call you back.', true);
         firstBad.focus();
         return;
       }
 
-      if (submit) {
-        submit.textContent = 'Thanks — Amir will call you back';
-        submit.disabled = true;
+      var endpoint = form.getAttribute('data-endpoint');
+      if (!endpoint || endpoint.indexOf('REPLACE-ME') !== -1) {
+        setStatus('The form is not connected yet. Please call 0418 126 371.', true);
+        return;
       }
-      if (status) status.textContent = 'Details captured on this page only — the form is not connected to email yet.';
-    });
 
-    form.addEventListener('input', function (e) {
-      if (e.target.classList) e.target.classList.remove('is-invalid');
+      if (submit) { submit.disabled = true; submit.textContent = 'Sending…'; }
+      setStatus('');
+
+      var files = fileInput && fileInput.files ? Array.prototype.slice.call(fileInput.files, 0, MAX_PHOTOS) : [];
+
+      Promise.all(files.map(shrink)).then(function (shrunk) {
+        var total = shrunk.reduce(function (n, f) { return n + f.size; }, 0);
+        if (total > MAX_TOTAL_BYTES) {
+          throw new Error('Those photos are still too large to send. Please attach fewer of them.');
+        }
+
+        var data = new FormData(form);
+        data.delete('photos');
+        shrunk.forEach(function (f) { data.append('photos', f, f.name); });
+
+        return fetch(endpoint, { method: 'POST', body: data });
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          if (!res.ok || !body.ok) throw new Error(body.error || 'We could not send that just now. Please call 0418 126 371.');
+          return body;
+        });
+      }).then(function () {
+        localStorage.setItem(COOLDOWN_KEY, String(Date.now()));
+        if (submit) submit.textContent = 'Thanks — Amir will call you back';
+        setStatus('Enquiry sent. Amir usually calls back the same day.');
+        form.reset();
+        if (dropLabel) dropLabel.textContent = 'Attach photos of the area';
+      }).catch(function (err) {
+        if (submit) { submit.disabled = false; submit.textContent = defaultLabel; }
+        setStatus(err.message || 'Something went wrong. Please call 0418 126 371.', true);
+        if (window.turnstile) window.turnstile.reset();
+      });
     });
   }
 
