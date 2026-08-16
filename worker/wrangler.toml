@@ -19,10 +19,10 @@ FROM_EMAIL = "Truecraft website <onboarding@resend.dev>"
 
 # Logo shown in the email header. Must be a publicly reachable URL — update it
 # if the site moves to a custom domain. Blank falls back to a text wordmark.
-LOGO_URL = "https://travanixlabs.github.io/Truecraft/uploads/IMG_9924.jpeg"
+LOGO_URL = "https://truecraftproperty.com.au/uploads/IMG_9924.jpeg"
 
 # Origins allowed to POST here. Add the custom domain when it goes live.
-ALLOWED_ORIGINS = "https://travanixlabs.github.io,http://localhost:8000"
+ALLOWED_ORIGINS = "https://truecraftproperty.com.au,https://www.truecraftproperty.com.au,https://travanixlabs.github.io,http://localhost:8000"
 
 # Rate-limit counters. Create with:
 #   npx wrangler kv namespace create RATE_LIMIT
