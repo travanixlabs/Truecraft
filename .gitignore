@@ -12,3 +12,4 @@ worker/node_modules/
 worker/.wrangler/
 .DS_Store
 Thumbs.db
+worker/email-preview.html

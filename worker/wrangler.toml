@@ -13,6 +13,10 @@ TO_EMAIL = "truecraft@outlook.com.au"
 # like "Truecraft website <quotes@truecraft.com.au>" and redeploy.
 FROM_EMAIL = "Truecraft website <onboarding@resend.dev>"
 
+# Logo shown in the email header. Must be a publicly reachable URL — update it
+# if the site moves to a custom domain. Blank falls back to a text wordmark.
+LOGO_URL = "https://travanixlabs.github.io/Truecraft/uploads/IMG_9924.jpeg"
+
 # Origins allowed to POST here. Add the custom domain when it goes live.
 ALLOWED_ORIGINS = "https://travanixlabs.github.io,http://localhost:8000"
 

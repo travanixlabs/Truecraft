@@ -9,6 +9,8 @@
    cannot be trusted.
    ========================================================================== */
 
+import { renderHtml, renderText } from './email.js';
+
 const LIMITS = {
   maxPhotos: 5,
   maxTotalBytes: 8 * 1024 * 1024,   // whole request, after the browser resizes
@@ -194,9 +196,9 @@ async function sendViaResend(env, q) {
   const payload = {
     from: env.FROM_EMAIL || 'Truecraft website <onboarding@resend.dev>',
     to: [env.TO_EMAIL || 'truecraft@outlook.com.au'],
-    subject: `Quote request — ${q.job}${q.suburb ? ' — ' + q.suburb : ''}`,
-    html: emailHtml(q),
-    text: emailText(q),
+    subject: `Quote request — ${q.job}${q.suburb ? ' — ' + q.suburb : ''} — ${q.name}`,
+    html: renderHtml(q, { logoUrl: env.LOGO_URL }),
+    text: renderText(q),
   };
   if (q.email) payload.reply_to = q.email;
   if (q.attachments.length) payload.attachments = q.attachments;
@@ -211,46 +213,6 @@ async function sendViaResend(env, q) {
   });
 
   return { ok: res.ok, status: res.status, body: res.ok ? null : await res.text() };
-}
-
-function emailHtml(q) {
-  const row = (label, value) => value
-    ? `<tr><td style="padding:6px 16px 6px 0;color:#6B7480;font:600 12px/1.4 Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;white-space:nowrap">${esc(label)}</td>
-         <td style="padding:6px 0;color:#171E27;font:400 15px/1.5 Arial,sans-serif">${esc(value)}</td></tr>`
-    : '';
-
-  return `<div style="font-family:Arial,sans-serif;max-width:640px">
-  <p style="margin:0 0 4px;font:600 12px/1 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#4C8B3C">Truecraft website</p>
-  <h1 style="margin:0 0 18px;font:700 22px/1.2 Arial,sans-serif;color:#171E27">New quote request</h1>
-  <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:18px">
-    ${row('Name', q.name)}
-    ${row('Phone', q.phone)}
-    ${row('Email', q.email)}
-    ${row('Suburb', q.suburb)}
-    ${row('Job type', q.job)}
-    ${row('Photos', q.photoCount ? `${q.photoCount} attached` : 'None')}
-  </table>
-  ${q.details ? `<p style="margin:0 0 6px;font:600 12px/1.4 Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#6B7480">What they are after</p>
-  <p style="margin:0 0 20px;padding:14px 16px;background:#F6F5F1;font:400 15px/1.6 Arial,sans-serif;color:#2E3742;white-space:pre-wrap">${esc(q.details)}</p>` : ''}
-  <p style="margin:0;font:400 13px/1.5 Arial,sans-serif;color:#6B7480">
-    Call back on <a href="tel:${esc(q.phone.replace(/[^\d+]/g, ''))}" style="color:#4C8B3C">${esc(q.phone)}</a>${q.email ? ', or just hit Reply to email them.' : '.'}
-  </p>
-</div>`;
-}
-
-function emailText(q) {
-  return [
-    'New quote request — Truecraft website',
-    '',
-    `Name:     ${q.name}`,
-    `Phone:    ${q.phone}`,
-    q.email ? `Email:    ${q.email}` : null,
-    q.suburb ? `Suburb:   ${q.suburb}` : null,
-    `Job type: ${q.job}`,
-    `Photos:   ${q.photoCount || 'none'}`,
-    '',
-    q.details ? `What they are after:\n${q.details}` : null,
-  ].filter(Boolean).join('\n');
 }
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */
