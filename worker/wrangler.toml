@@ -3,6 +3,10 @@ main = "src/index.js"
 compatibility_date = "2026-02-05"
 workers_dev = true
 
+# Off by default every deployment would otherwise publish an extra public
+# preview URL per version. One endpoint is enough to reason about.
+preview_urls = false
+
 [vars]
 # Where enquiries land.
 TO_EMAIL = "truecraft@outlook.com.au"

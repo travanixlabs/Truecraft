@@ -13,3 +13,4 @@ worker/.wrangler/
 .DS_Store
 Thumbs.db
 worker/email-preview.html
+worker/.cf-token
