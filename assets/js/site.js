@@ -181,6 +181,8 @@
   var MAX_TOTAL_BYTES = 8 * 1024 * 1024;
   var COOLDOWN_MS = 15 * 60 * 1000;
   var COOLDOWN_KEY = 'tc-quote-sent';
+  var ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  var ALLOWED_LABEL = 'JPEG, PNG or WebP';
 
   var form = q('form');
   var drop = q('drop');
@@ -190,17 +192,50 @@
   var stamp = q('rendered');
   if (stamp) stamp.value = String(Date.now());
 
+  // Say exactly what is wrong and what would be accepted, at the moment the
+  // file is chosen — not after a round trip to the server.
+  function fileProblem(files) {
+    if (files.length > MAX_PHOTOS) {
+      return 'That is ' + files.length + ' photos — please choose ' + MAX_PHOTOS + ' or fewer.';
+    }
+
+    var bad = [];
+    var heic = false;
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      if (ALLOWED_TYPES.indexOf(f.type) !== -1) continue;
+      bad.push(f.name);
+      if (/heic|heif/i.test(f.type) || /\.hei[cf]$/i.test(f.name)) heic = true;
+    }
+
+    if (bad.length) {
+      var which = bad.length === 1 ? '“' + bad[0] + '” is not' : bad.length + ' of those files are not';
+      if (heic) {
+        return which + ' a format browsers can read. iPhone HEIC photos need converting — ' +
+          'in Settings › Camera › Formats choose “Most Compatible”, or text them to 0418 126 371 instead.';
+      }
+      return which + ' a supported image. Please attach ' + ALLOWED_LABEL + ' files.';
+    }
+
+    return null;
+  }
+
   if (fileInput && dropLabel) {
     fileInput.addEventListener('change', function () {
-      var n = fileInput.files ? fileInput.files.length : 0;
-      if (n > MAX_PHOTOS) {
-        setStatus('Please choose no more than ' + MAX_PHOTOS + ' photos.', true);
+      var files = fileInput.files ? Array.prototype.slice.call(fileInput.files) : [];
+      var problem = fileProblem(files);
+
+      if (problem) {
+        setStatus(problem, true);
         fileInput.value = '';
-        n = 0;
+        dropLabel.textContent = 'Attach photos of the area';
+        return;
       }
-      dropLabel.textContent = n === 0
+
+      setStatus('');
+      dropLabel.textContent = files.length === 0
         ? 'Attach photos of the area'
-        : n + (n === 1 ? ' photo attached' : ' photos attached');
+        : files.length + (files.length === 1 ? ' photo attached' : ' photos attached');
     });
   }
 
@@ -213,7 +248,7 @@
 
   // Draw the image to a canvas at a capped size and re-encode as JPEG.
   function shrink(file) {
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       var url = URL.createObjectURL(file);
       var img = new Image();
       img.onload = function () {
@@ -229,7 +264,10 @@
           resolve(new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }));
         }, 'image/jpeg', JPEG_QUALITY);
       };
-      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('“' + file.name + '” could not be read. Please attach ' + ALLOWED_LABEL + ' files.'));
+      };
       img.src = url;
     });
   }
@@ -281,7 +319,13 @@
       if (submit) { submit.disabled = true; submit.textContent = 'Sending…'; }
       setStatus('');
 
-      var files = fileInput && fileInput.files ? Array.prototype.slice.call(fileInput.files, 0, MAX_PHOTOS) : [];
+      var files = fileInput && fileInput.files ? Array.prototype.slice.call(fileInput.files) : [];
+      var problem = fileProblem(files);
+      if (problem) {
+        if (submit) { submit.disabled = false; submit.textContent = defaultLabel; }
+        setStatus(problem, true);
+        return;
+      }
 
       Promise.all(files.map(shrink)).then(function (shrunk) {
         var total = shrunk.reduce(function (n, f) { return n + f.size; }, 0);
