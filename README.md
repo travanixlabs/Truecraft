@@ -43,30 +43,33 @@ form service) and replace the marked block in `assets/js/site.js` to make it liv
 Same for the Google reviews panel: the 5.0 rating and skeleton feed are placeholders,
 matching the design's "goes live on approval" state.
 
-## Missing image assets
+## Assets
 
-Two files transferred from the design project. The remaining nine photos and the video
-are larger than the 256 KiB the design API will return per file, so they were truncated
-and are **not** in `uploads/`. Export them from the design project and drop them in —
-the filenames below are exactly what `index.html` expects.
+| File | Used for |
+| --- | --- |
+| `IMG_9924.jpeg` | Logo — nav, hero, favicon |
+| `IMG_4944.jpg` | Hero background **and** the Carports card |
+| `26558.jpg` | Patios card, and the video poster |
+| `pergola-gable.jpg` | Pergolas card |
+| `decking-composite-pool.jpg` | Decking card |
+| `IMG_4775.jpg` | Wall cladding card |
+| `shed-colorbond.jpg` | Sheds card |
+| `fencing-colorbond.jpg` | Fencing card |
+| `balustrade-glass-stair.jpg` | Balustrading card |
+| `deck-subframe-before-after.jpg` | Past work, card 1 |
+| `shed-build.mp4` | Past work, card 2 |
+| `IMG_2047.jpg` | Past work, card 3 |
 
-Present:
+Originals live in the design project (several are also renamed copies of WhatsApp
+exports — the slugged names here are what `index.html` references).
 
-- `uploads/IMG_9924.jpeg` — logo (nav + hero + favicon)
-- `uploads/shed-colorbond.jpg` — Sheds card
+Three were full-resolution phone photos and were downscaled and recompressed with
+ffmpeg (`-q:v 3`, metadata stripped) so the page isn't shipping 19 MB:
 
-Still needed:
+| File | Was | Now |
+| --- | --- | --- |
+| `IMG_4944.jpg` | 3908×2931, 2.8 MB | 2400×1800, 705 KB |
+| `IMG_4775.jpg` | 5712×4284, 6.4 MB | 1600×1200, 396 KB |
+| `IMG_2047.jpg` | 4028×5371, 5.2 MB | 1200×1600, 369 KB |
 
-- `uploads/IMG_4944.jpg` — hero background **and** Carports card
-- `uploads/26558.jpg` — Patios card, also the video poster
-- `uploads/pergola-gable.jpg` — Pergolas card
-- `uploads/decking-composite-pool.jpg` — Decking card
-- `uploads/IMG_4775.jpg` — Wall cladding card
-- `uploads/fencing-colorbond.jpg` — Fencing card
-- `uploads/balustrade-glass-stair.jpg` — Balustrading card
-- `uploads/deck-subframe-before-after.jpg` — Past work, card 1
-- `uploads/IMG_2047.jpg` — Past work, card 3
-- `uploads/shed-build.mp4` — Past work, card 2 (video)
-
-Worth compressing them on the way in — several are multi-megabyte phone photos, and the
-hero image is the largest thing on the page.
+The other nine files are byte-identical to the design project's copies.
