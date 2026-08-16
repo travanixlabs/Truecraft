@@ -64,8 +64,17 @@ approximate under a burst. That's fine for flood control.
 
 1. Honeypot field (`company`) — filled only by bots. Returns a fake success.
 2. Time trap — rejects submissions under 3 seconds old.
-3. Cloudflare Turnstile — verified server-side.
-4. Rate limits above.
+3. Rate limits above.
+4. Cloudflare Turnstile — **parked, not currently in use.**
+
+The Worker verifies a Turnstile token whenever `TURNSTILE_SECRET` is set, and
+skips the check entirely when it is not. To switch it on later: create the
+widget in the Cloudflare dashboard, uncomment the `.cf-turnstile` div and the
+`api.js` script in `index.html` with the site key, then
+`npx wrangler secret put TURNSTILE_SECRET`. No code change needed.
+
+Without it, the endpoint is open to a script that posts the right fields from
+rotating IPs. The global daily cap is what bounds the damage.
 
 ## Testing
 

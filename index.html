@@ -340,9 +340,14 @@
       </div>
       <input type="hidden" name="rendered_at" data-tc="rendered">
 
-      <div class="cf-turnstile" data-tc="turnstile"
-           data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"
-           data-theme="light" data-size="flexible"></div>
+      <!-- Turnstile is parked for now; spam is handled by the honeypot, the
+           time trap and the Worker's per-IP and global rate limits. To turn it
+           on: create the widget, restore the div below with its site key, add
+           back the api.js script at the foot of this file, and set the
+           TURNSTILE_SECRET secret on the Worker — the Worker already verifies
+           the token whenever that secret is present.
+      <div class="cf-turnstile" data-sitekey="SITE_KEY" data-theme="light" data-size="flexible"></div>
+      -->
 
       <button class="tc-submit" type="submit" data-tc="submit">Request my free quote</button>
       <p class="tc-form__status" data-tc="status" role="status" aria-live="polite"></p>
@@ -392,7 +397,7 @@
 }
 </script>
 
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script> -->
 <script src="assets/js/site.js" defer></script>
 </body>
 </html>
