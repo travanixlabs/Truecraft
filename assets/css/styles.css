@@ -497,9 +497,7 @@ h1, h2, h3, p, blockquote, figure { margin: 0; }
   color: #4285F4;
 }
 .tc-google__label { font: 600 15px/1 var(--sans); color: var(--ink); }
-.tc-google__score { display: flex; align-items: baseline; gap: 12px; }
-.tc-google__number { font: 700 54px/1 var(--sans); letter-spacing: -0.03em; color: var(--ink); }
-.tc-google__stars { font: 500 20px/1 var(--sans); color: #F5A623; }
+.tc-google__lede { font: 600 19px/1.4 var(--sans); color: var(--ink); }
 .tc-google__note { font: 400 15px/1.5 var(--sans); color: var(--grey); }
 
 .tc-google__feed {

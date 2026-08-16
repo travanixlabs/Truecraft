@@ -239,28 +239,25 @@
       </blockquote>
     </div>
 
-    <!-- The rating and feed below are filled from the live Google Business
-         Profile when the Worker has a Places API key. Without one this stays
-         exactly as written — a real rating and a link, no broken state. -->
-    <div class="tc-google" data-reveal data-tc="google">
+    <!-- No rating or review count is shown here on purpose. The site has no
+         way to know the current figure, and a hardcoded one would be a claim
+         we cannot substantiate the moment it changes. The link goes to the
+         live profile, where the real numbers are. -->
+    <div class="tc-google" data-reveal>
       <div class="tc-google__panel">
         <div class="tc-google__brand">
           <span class="tc-google__g" aria-hidden="true">G</span>
           <span class="tc-google__label">Google reviews</span>
         </div>
-        <p class="tc-google__score">
-          <span class="tc-google__number" data-tc="grating">5.0</span>
-          <span class="tc-google__stars" data-tc="gstars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          <span class="tc-sr" data-tc="gsr">5.0 out of 5</span>
-        </p>
-        <p class="tc-google__note" data-tc="gcount">Rated on the Truecraft Property Services Google Business Profile.</p>
-        <a class="tc-btn tc-btn--ink tc-btn--sm" data-tc="glink" href="https://share.google/CAwrOAwDIwOFE5InZ" target="_blank" rel="noopener">Review us on Google</a>
+        <p class="tc-google__lede">Truecraft is on Google with a verified business profile.</p>
+        <p class="tc-google__note">Read what customers have said about their job &mdash; or leave a review of your own if we have worked for you.</p>
+        <a class="tc-btn tc-btn--ink tc-btn--sm" href="https://share.google/CAwrOAwDIwOFE5InZ" target="_blank" rel="noopener">See us on Google</a>
       </div>
 
-      <div class="tc-google__feed" data-tc="gfeed">
+      <div class="tc-google__feed">
         <p class="tc-google__pending">
-          <span class="tc-google__pendingtag">Verified profile</span>
-          <span>Truecraft is listed on Google &mdash; tap through to read reviews or leave one.</span>
+          <span class="tc-google__pendingtag">Perth metro</span>
+          <span>Servicing the Perth metropolitan area, seven days. Free quotes, fixed before work starts.</span>
         </p>
       </div>
     </div>
