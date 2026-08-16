@@ -239,35 +239,28 @@
       </blockquote>
     </div>
 
-    <div class="tc-google" data-reveal>
+    <!-- The rating and feed below are filled from the live Google Business
+         Profile when the Worker has a Places API key. Without one this stays
+         exactly as written — a real rating and a link, no broken state. -->
+    <div class="tc-google" data-reveal data-tc="google">
       <div class="tc-google__panel">
         <div class="tc-google__brand">
           <span class="tc-google__g" aria-hidden="true">G</span>
           <span class="tc-google__label">Google reviews</span>
         </div>
         <p class="tc-google__score">
-          <span class="tc-google__number">5.0</span>
-          <span class="tc-google__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          <span class="tc-sr">5.0 out of 5</span>
+          <span class="tc-google__number" data-tc="grating">5.0</span>
+          <span class="tc-google__stars" data-tc="gstars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="tc-sr" data-tc="gsr">5.0 out of 5</span>
         </p>
-        <p class="tc-google__note">Live rating and latest reviews pull straight from the Google Business Profile.</p>
-        <a class="tc-btn tc-btn--ink tc-btn--sm" href="https://share.google/CAwrOAwDIwOFE5InZ" target="_blank" rel="noopener">Review us on Google</a>
+        <p class="tc-google__note" data-tc="gcount">Rated on the Truecraft Property Services Google Business Profile.</p>
+        <a class="tc-btn tc-btn--ink tc-btn--sm" data-tc="glink" href="https://share.google/CAwrOAwDIwOFE5InZ" target="_blank" rel="noopener">Review us on Google</a>
       </div>
 
-      <div class="tc-google__feed">
-        <div class="tc-google__skeletons" aria-hidden="true">
-          <div class="tc-skel">
-            <div class="tc-skel__head"><span class="tc-skel__avatar"></span><span class="tc-skel__lines"><i style="width:88px;height:9px"></i><i style="width:56px;height:8px;background:#F0EEE9"></i></span></div>
-            <div class="tc-skel__body"><i></i><i></i><i style="width:62%"></i></div>
-          </div>
-          <div class="tc-skel">
-            <div class="tc-skel__head"><span class="tc-skel__avatar"></span><span class="tc-skel__lines"><i style="width:76px;height:9px"></i><i style="width:64px;height:8px;background:#F0EEE9"></i></span></div>
-            <div class="tc-skel__body"><i></i><i></i><i style="width:48%"></i></div>
-          </div>
-        </div>
+      <div class="tc-google__feed" data-tc="gfeed">
         <p class="tc-google__pending">
-          <span class="tc-google__pendingtag">Goes live on approval</span>
-          <span>Profile submitted &mdash; this feed fills in automatically once Google verifies it.</span>
+          <span class="tc-google__pendingtag">Verified profile</span>
+          <span>Truecraft is listed on Google &mdash; tap through to read reviews or leave one.</span>
         </p>
       </div>
     </div>
