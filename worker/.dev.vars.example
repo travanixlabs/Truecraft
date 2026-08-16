@@ -1,0 +1,15 @@
+# Copy to `.dev.vars` and fill in. Wrangler's equivalent of .env.local —
+# it is read by `wrangler dev` for LOCAL runs only, and is gitignored.
+#
+# Production secrets do NOT come from here. They are set once with:
+#   npx wrangler secret put RESEND_API_KEY
+#   npx wrangler secret put TURNSTILE_SECRET
+# and stored encrypted in Cloudflare.
+
+# resend.com/api-keys — "Sending access" is enough
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Cloudflare's always-passes test key. Swap for the real widget secret when
+# testing the browser flow for real.
+# https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
