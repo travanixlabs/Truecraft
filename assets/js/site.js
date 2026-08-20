@@ -160,13 +160,19 @@
   if (vid) {
     vid.muted = true;
     vid.setAttribute('muted', '');
+    // Autoplay failed, so the video needs to be tappable. The class restores
+    // pointer events that the touch-scroll fix removes.
+    var showControls = function () {
+      vid.controls = true;
+      vid.classList.add('has-controls');
+    };
     var tryPlay = function () {
       var p = vid.play();
-      if (p && p.catch) p.catch(function () { vid.controls = true; });
+      if (p && p.catch) p.catch(function () { showControls(); });
     };
     tryPlay();
     vid.addEventListener('canplay', tryPlay, { once: true });
-    vid.addEventListener('error', function () { vid.controls = true; }, { once: true });
+    vid.addEventListener('error', showControls, { once: true });
   }
 
   /* ── Quote form ──────────────────────────────────────────────────────────

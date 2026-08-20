@@ -412,7 +412,19 @@ h1, h2, h3, p, blockquote, figure { margin: 0; }
   display: block;
   transition: transform .8s var(--ease);
 }
-.tc-workcard__media video { background: var(--fill); }
+.tc-workcard__media video {
+  background: var(--fill);
+  /* A drag starting on the video must still scroll the page. pan-y tells the
+     browser vertical panning is ours to keep, and on touch devices the video
+     is purely decorative, so it takes no pointer events at all — otherwise it
+     swallows the gesture. Desktop keeps them so the card still lifts on hover.
+     If autoplay fails we add .has-controls and hand interaction back. */
+  touch-action: pan-y;
+}
+@media (hover: none) {
+  .tc-workcard__media video { pointer-events: none; }
+  .tc-workcard__media video.has-controls { pointer-events: auto; touch-action: manipulation; }
+}
 .tc-workcard:hover .tc-workcard__media img { transform: scale(1.05); }
 .tc-workcard__tag {
   position: absolute;
